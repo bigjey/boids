@@ -10,6 +10,7 @@ document.body.appendChild(canvas);
 
 const BOIDS_COUNT = 150;
 let BOID_SPEED = 4;
+let MOVING_OBSTACLES = false;
 const BOID_SIZE = 10;
 const BOID_SENSOR_RADIUS = 60;
 const BOID_OBSTACLE_SENSOR_RADIUS = 20;
@@ -31,9 +32,9 @@ const tick = () => {
 const update = () => {
   flock.update();
 
-  // for (const obstacle of obstacles) {
-  //   obstacle.update();
-  // }
+  for (const obstacle of obstacles) {
+    obstacle.update();
+  }
 };
 
 const render = () => {
@@ -361,14 +362,16 @@ class RectangleObstacle implements Obstacle {
   }
 
   update() {
-    // this.y += this.dy;
-    // this.x += this.dx;
-    // if (this.y < 20 || this.y + this.h > canvas.height - 20) {
-    //   this.dy *= -1;
-    // }
-    // if (this.x < 20 || this.x + this.w > canvas.width - 20) {
-    //   this.dx *= -1;
-    // }
+    if (MOVING_OBSTACLES) {
+      this.y += this.dy;
+      this.x += this.dx;
+      if (this.y < 20 || this.y + this.h > canvas.height - 20) {
+        this.dy *= -1;
+      }
+      if (this.x < 20 || this.x + this.w > canvas.width - 20) {
+        this.dx *= -1;
+      }
+    }
   }
 }
 
@@ -447,6 +450,13 @@ function isColliding(x, y, obstacle: Obstacle): boolean {
   "input",
   (e) => {
     cohesionPower = e.target.value;
+  }
+);
+
+(document.getElementById("obstacles") as HTMLInputElement).addEventListener(
+  "input",
+  (e) => {
+    MOVING_OBSTACLES = e.target.checked;
   }
 );
 
